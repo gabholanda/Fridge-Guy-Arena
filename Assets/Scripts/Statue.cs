@@ -1,15 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Statue : MonoBehaviour
 {
-    public float total_health = 100;
     public float current_health;
+    public float total_health = 100;
+    public float current_scale;
     private float health_scale_total;
+
     public GameObject health_bar;
 
-    // Start is called before the first frame update
     void Start()
     {
         current_health = total_health;
@@ -17,16 +18,12 @@ public class Statue : MonoBehaviour
         health_scale_total = health_bar.transform.localScale.x;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void TakeDamage(float _damage)
     {
         if (current_health <= 0) return;
         current_health -= _damage;
-        health_bar.transform.localScale -= new Vector3(_damage, 0, 0);
+        float current = health_scale_total * current_health / total_health;
+        if (health_bar.transform.localScale.x - current <= 0) return;
+        health_bar.transform.localScale = new Vector3(current, 1, 1);
     }
 }

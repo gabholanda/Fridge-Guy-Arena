@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -21,16 +21,19 @@ public class Enemy : MonoBehaviour
     {
         if (!target) return;
         this.transform.position = Vector2.LerpUnclamped(this.transform.position, target.position, this.speed * Time.deltaTime);
-
-        //Debug.Log(Vector2.Distance(this.transform.position, target.position));
-        if (Vector2.Distance(this.transform.position, target.position) >= 1f) return;
-        StartCoroutine(ExecuteDamage());
     }
 
-    private IEnumerator ExecuteDamage()
+
+    float trigger_damage = 0;
+    void OnCollisionStay2D(Collision2D collision)
     {
-        float time = Random.Range(minSpawnTime, maxSpawnTime);
-        yield return new WaitForSeconds(time);
-        target.gameObject.GetComponent<Statue>().TakeDamage(10f);
+        if (!collision.gameObject.CompareTag("Target")) return;
+        trigger_damage += Time.fixedDeltaTime;
+        if (Math.Ceiling(trigger_damage) % 6 == 0)
+        {
+            trigger_damage = 0.1f;
+            target.gameObject.GetComponent<Statue>().TakeDamage(10f);
+        }
     }
+
 }
